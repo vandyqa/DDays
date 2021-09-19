@@ -1,105 +1,89 @@
 package DD;
 
-    	import org.testng.annotations.DataProvider;
-
-		import org.testng.annotations.Test;
-		import resources.UtilityBase;
-		import java.io.IOException;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+import resources.UtilityBase;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-		import org.openqa.selenium.chrome.ChromeDriver;
-		import java.io.IOException;
+import org.openqa.selenium.chrome.ChromeDriver;
+import java.io.IOException;
 import pageObjects.FormMyAddressBook;
 import pageObjects.LandingPage;
-		import pageObjects.SignInPage;
-		import pageObjects.MyAddressBook;
-		import org.testng.annotations.AfterTest;
-		import org.testng.annotations.BeforeTest;
+import pageObjects.SignInPage;
+import pageObjects.MyAddressBook;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+
+public class LandAddressBook extends  UtilityBase {
+public   static Logger log = LogManager.getLogger(UtilityBase.class.getName());   
+public WebDriver driver;
+@BeforeTest
+public void initialize() throws IOException{
+driver=	initializeDriver();
+//driver.navigate().to("http://www.dollardays.com");
+driver.get(prop.getProperty("url"));
+}
+@Test(dataProvider ="getData" ,priority =1)
+public void basePageNavigation(String Username,String Password, String text) throws IOException         //one method is inheritance
+{
+driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			
+LandingPage lp= new LandingPage(driver);   
+//another method is creating object to that class and invoke methods of it
+lp.getLogin() . click();  //driver.findElement(By.xpath - click on signin drop down
+lp.signinclick().click(); //driver.findElement(By.xpath - click on sign in again
+log.info("successful login");
 		
-
-
-		public class LandAddressBook extends  UtilityBase {
-		
-			public   static Logger log = LogManager.getLogger(UtilityBase.class.getName());   
+//methods calling from sign in page		
+SignInPage sp = new SignInPage(driver);    //creating an object with the class already created which is SignInPage and initializing driver with it
+sp.getemail().sendKeys(Username); //sending values in email field
+sp.getpassword().sendKeys(Password);  //sending values in password field
+//System.out.println(text);
+ sp.hitsigninbutton().click();  // clicking signin button
+   
+}
+     
+@Test (priority=2)
+public void myaddressbookdropdown() throws IOException 
+{
+//methods calling from My address Book page
+ MyAddressBook mab=new MyAddressBook(driver);
+mab.AddressBookdropdown().click();
+mab.AddressBookselect().click();
+//mab.AddressBookclick().click();
+mab.AddressBookaddaddress().click();
 			
-			public WebDriver driver;
-
-		@BeforeTest
-
-		public void initialize() throws IOException{
-
-		driver=	initializeDriver();
-//			driver.navigate().to("http://www.dollardays.com");
-			driver.get(prop.getProperty("url"));
-		}
-
-			@Test(dataProvider ="getData" ,priority =1)
-					
-		public void basePageNavigation(String Username,String Password, String text) throws IOException         //one method is inheritance
-						{
-				driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-										
-					LandingPage lp= new LandingPage(driver);   
-					//another method is creating object to that class and invoke methods of it
-					 
-					lp.getLogin() . click();  //driver.findElement(By.xpath - click on signin drop down
-					lp.signinclick().click(); //driver.findElement(By.xpath - click on sign in again
-					log.info("successful login");
-					
-				//methods calling from sign in page		
-				SignInPage sp = new SignInPage(driver);    //creating an object with the class already created which is SignInPage and initializing driver with it
-				sp.getemail().sendKeys(Username); //sending values in email field
-				sp.getpassword().sendKeys(Password);  //sending values in password field
-					//System.out.println(text);
-		       sp.hitsigninbutton().click();  // clicking signin button
-		       
-						}
-		      
-			@Test (priority=2)
-			public void myaddressbookdropdown() throws IOException 
-		       {
-		       //methods calling from My address Book page
-		       MyAddressBook mab=new MyAddressBook(driver);
-				mab.AddressBookdropdown().click();
-				mab.AddressBookselect().click();
-				//mab.AddressBookclick().click();
-				mab.AddressBookaddaddress().click();
-			
-						}
-			
-			
-			// Form begins for myAddress book
-			@Test(dataProvider ="getdata1" ,priority=3)
-			public void FormMyAddressBook(String Firstname,String LastName, String companyName, String StreetAdd, String Apt, String Country, String city, String State, String Phonenum,String Ext, String Zipcode) throws IOException         //one method is inheritance
-		
-			{
-			//	String enableRadioButton ="enabled";
-			//	String disableRadioButton ="disable";
-
-			     //methods calling from FormMyAddressBookpage
-			       FormMyAddressBook fmab=new FormMyAddressBook(driver);
-			       fmab.getFirstName().sendKeys(Firstname);
-			       fmab.getLastName().sendKeys(LastName);
-			       fmab.getCompanyName().sendKeys(companyName);
-			       fmab.getStreetAddress().sendKeys(StreetAdd);
-			       fmab.getApt().sendKeys(Apt);
-			       fmab.getCountry().sendKeys(Country);
-			       fmab.getCity().sendKeys(city);
-			       fmab.getState().sendKeys(State);
-			       fmab.getPhoneNum().sendKeys(Phonenum);
-			       fmab.getExtension().sendKeys(Ext);
-			       fmab.getZipCode().sendKeys(Zipcode);
+}
+// Form begins for myAddress book
+@Test(dataProvider ="getdata1" ,priority=3)
+public void FormMyAddressBook(String Firstname,String LastName, String companyName, String StreetAdd, String Apt, String Country, String city, String State, String Phonenum,String Ext, String Zipcode) throws IOException         //one method is inheritance
+{
+//	String enableRadioButton ="enabled";
+//	String disableRadioButton ="disable";
+ //methods calling from FormMyAddressBookpage
+FormMyAddressBook fmab=new FormMyAddressBook(driver);
+fmab.getFirstName().sendKeys(Firstname);
+fmab.getLastName().sendKeys(LastName);
+fmab.getCompanyName().sendKeys(companyName);
+fmab.getStreetAddress().sendKeys(StreetAdd);
+fmab.getApt().sendKeys(Apt);
+fmab.getCountry().sendKeys(Country);
+fmab.getCity().sendKeys(city);
+fmab.getState().sendKeys(State);
+fmab.getPhoneNum().sendKeys(Phonenum);
+fmab.getExtension().sendKeys(Ext);
+fmab.getZipCode().sendKeys(Zipcode);
 			       
-		// methods calling for radio buttons from FormMyAddressBook
-			     //  fmab.getClwsd().click();
-			       //System.out.println("The output of the Isselected is " +driver.findElement(By.xpath( "/html/body/div[3]/div[1]/div[3]/div/table/tbody/tr[5]/td/label[1]/span")).isSelected());
-			   	
-			       //System.out.println("The output of the Isenabled is " +driver.findElement(By.xpath( "/html/body/div[3]/div[1]/div[3]/div/table/tbody/tr[5]/td/label[1]/span")).isEnabled());
+// methods calling for radio buttons from FormMyAddressBook
+//  fmab.getClwsd().click();
+//System.out.println("The output of the Isselected is " +driver.findElement(By.xpath( "/html/body/div[3]/div[1]/div[3]/div/table/tbody/tr[5]/td/label[1]/span")).isSelected());
+ 	
+//System.out.println("The output of the Isenabled is " +driver.findElement(By.xpath( "/html/body/div[3]/div[1]/div[3]/div/table/tbody/tr[5]/td/label[1]/span")).isEnabled());
 			      // System.out.println("The output of the isdisplayed is " +driver.findElement(By.xpath( "/html/body/div[3]/div[1]/div[3]/div/table/tbody/tr[5]/td/label[1]/span")).isDisplayed());
 			      // System.out.println("The output of the Isselected is "  +fmab.getClwsd().isSelected());
 			      //   System.out.println("The output of the Isenabled is " +fmab.getClwsd().isEnabled());
@@ -108,17 +92,17 @@ import pageObjects.LandingPage;
 			  //    fmab.getClwsd().enableRadioButton.click();
 			      //enableRadioButton.click();
 			//  fmab.getClwsd()=Webdriver1.findElement(By.xpath("/html/body/form/div[5]/div[1]/section/div/div[3]/div/div[2]/div/section/div[2]/div/div[12]/div/ul/li[1]/label\"));"
-			  		fmab.getClwsd().click();
-			  		fmab.getClwosd().click();
-			  		fmab.getrl().click();
-			  		
-			  		//Hit Save Changes
-			  		fmab.getSC().click();
-			  		
-			  		
-			  		
+fmab.getClwsd().click();
+fmab.getClwosd().click();
+fmab.getrl().click();
+  		
+//Hit Save Changes
+fmab.getSC().click();
+  		
+		
+	
 	  	         
-			}
+}
 			  		@Test(priority =4)
 			  		public void ValidateSaveChanges() throws IOException
 			  		{
